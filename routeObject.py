@@ -7,11 +7,13 @@ from openpyxl.styles import Font, PatternFill, Alignment
 # Function to get WHOIS data
 def get_whois_data(prefix):
     try:
-        result = subprocess.run(['whois', prefix], capture_output=True, text=True)
+        # Run the whois command and capture the output as bytes
+        result = subprocess.run(['whois', prefix], capture_output=True)
         if result.returncode != 0:
-            raise Exception(result.stderr)
+            raise Exception(result.stderr.decode(errors='replace'))
         
-        output = result.stdout
+        # Decode output manually and handle encoding errors
+        output = result.stdout.decode('utf-8', errors='replace')
 
         # Extract fields using regex
         route_match = re.search(r'route:\s*(\S+)', output, re.IGNORECASE)
